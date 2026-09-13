@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AIESEC in MUST — CV Builder</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @media print {
+      body { background: #fff !important; color: #000 !important; }
+      .no-print { display: none !important; }
+      .print-area { 
+        width: 100% !important; 
+        margin: 0 !important; 
+        padding: 0 !important; 
+        box-shadow: none !important; 
+        background: white !important; 
+        color: black !important; 
+      }
+      .print-credits { display: block !important; }
+      @page { margin: 12mm; }
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-slate-900 text-slate-100 flex flex-col justify-between font-sans">
+
+  <!-- Header -->
+  <header class="no-print bg-slate-800 border-b border-slate-700 px-6 py-4 flex flex-wrap justify-between items-center gap-4">
+    <div>
+      <h1 class="text-xl font-bold text-sky-400">AIESEC in MUST — CV Builder</h1>
+      <p class="text-xs text-slate-400">Build and export your professional resume in real-time</p>
+    </div>
+    <div class="flex gap-3 items-center">
+      <button onclick="clearForm()" class="px-3 py-1.5 text-sm bg-rose-900/50 hover:bg-rose-800 text-rose-200 border border-rose-700 rounded transition">
+        Clear All
+      </button>
+      <button onclick="window.print()" class="px-4 py-1.5 text-sm bg-sky-600 hover:bg-sky-500 text-white font-medium rounded shadow transition">
+        Download PDF / Print
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-1 flex flex-col md:flex-row gap-6 p-6 max-w-[1600px] w-full mx-auto">
+    
+    <!-- Editor Panel (Left Side) -->
+    <section class="no-print w-full md:w-1/2 lg:w-5/12 bg-slate-800/60 border border-slate-700 rounded-lg p-4 overflow-y-auto space-y-4 max-h-[85vh]">
+      
+      <!-- Personal Info -->
+      <div class="border border-slate-700 rounded bg-slate-800">
+        <button onclick="toggleAccordion('acc-personal')" class="w-full text-left px-4 py-3 font-semibold text-slate-200 flex justify-between items-center">
+          <span>Personal Information</span>
+          <span id="icon-acc-personal">−</span>
+        </button>
+        <div id="acc-personal" class="p-4 border-t border-slate-700 space-y-3">
+          <input type="text" id="input-fullName" placeholder="Full Name" oninput="updatePreview()" class="w-full p-2 bg-slate-900 border border-slate-700 rounded text-sm text-slate-100 focus:outline-none focus:border-sky-500">
+          <input type="text" id="input-title" placeholder="Professional Title (e.g., Creative Director)" oninput="updatePreview()" class="w-full p-2 bg-slate-900 border border-slate-700 rounded text-sm text-slate-100 focus:outline-none focus:border-sky-500">
+          <div class="grid grid-cols-2 gap-2">
+            <input type="email" id="input-email" placeholder="Email Address" oninput="updatePreview()" class="p-2 bg-slate-900 border border-slate-700 rounded text-sm text-slate-100 focus:outline-none focus:border-sky-500">
+            <input type="text" id="input-phone" placeholder="Phone Number" oninput="updatePreview()" class="p-2 bg-slate-900 border border-slate-700 rounded text-sm text-slate-100 focus:outline-none focus:border-sky-500">
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <input type="text" id="input-location" placeholder="Location (e.g., Cairo, Egypt)" oninput="updatePreview()" class="p-2 bg-slate-900 border border-slate-700 rounded text-sm text-slate-100 focus:outline-none focus:border-sky-500">
+            <input type="text" id="input-linkedin" placeholder="LinkedIn / Portfolio URL" oninput="updatePreview()" class="p-2 bg-slate-900 border border-slate-700 rounded text-sm text-slate-100 focus:outline-none focus:border-sky-500">
+          </div>
+        </div>
+      </div>
+
+      <!-- Professional Summary -->
+      <div class="border border-slate-700 rounded bg-slate-800">
+        <button onclick="toggleAccordion('acc-summary')" class="w-full text-left px-4 py-3 font-semibold text-slate-200 flex justify-between items-center">
+          <span>Professional Summary</span>
+          <span id="icon-acc-summary">+</span>
+        </button>
+        <div id="acc-summary" class="hidden p-4 border-t border-slate-700 space-y-2">
+          <textarea id="input-summary" rows="4" maxlength="500" placeholder="Brief statement highlighting your career achievements and core competencies..." oninput="updatePreview()" class="w-full p-2 bg-slate-900 border border-slate-700 rounded text-sm text-slate-100 focus:outline-none focus:border-sky-500 resize-none"></textarea>
+          <div class="flex justify-between text-xs text-slate-400">
+            <span>Recommended length: 2–4 sentences</span>
+            <span id="char-count">0 / 500</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Experience -->
+      <div class="border border-slate-700 rounded bg-slate-800">
+        <button onclick="toggleAccordion('acc-experience')" class="w-full text-left px-4 py-3 font-semibold text-slate-200 flex justify-between items-center">
+          <span>Work Experience</span>
+          <span id="icon-acc-experience">+</span>
+        </button>
+        <div id="acc-experience" class="hidden p-4 border-t border-slate-700 space-y-4">
+          <div id="experience-list" class="space-y-3"></div>
+          <button onclick="addExperience()" class="w-full py-1.5 text-xs bg-slate-700 hover:bg-slate-600 text-sky-300 rounded border border-dashed border-sky-600">
+            + Add Experience
+          </button>
+        </div>
+      </div>
+
+      <!-- Education -->
+      <div class="border border-slate-700 rounded bg-slate-800">
+        <button onclick="toggleAccordion('acc-education')" class="w-full text-left px-4 py-3 font-semibold text-slate-200 flex justify-between items-center">
+          <span>Education</span>
+          <span id="icon-acc-education">+</span>
+        </button>
+        <div id="acc-education" class="hidden p-4 border-t border-slate-700 space-y-4">
+          <div id="education-list" class="space-y-3"></div>
+          <button onclick="addEducation()" class="w-full py-1.5 text-xs bg-slate-700 hover:bg-slate-600 text-sky-300 rounded border border-dashed border-sky-600">
+            + Add Education
+          </button>
+        </div>
+      </div>
+
+      <!-- Skills -->
+      <div class="border border-slate-700 rounded bg-slate-800">
+        <button onclick="toggleAccordion('acc-skills')" class="w-full text-left px-4 py-3 font-semibold text-slate-200 flex justify-between items-center">
+          <span>Skills</span>
+          <span id="icon-acc-skills">+</span>
+        </button>
+        <div id="acc-skills" class="hidden p-4 border-t border-slate-700 space-y-3">
+          <input type="text" id="skill-input" placeholder="Type a skill and press Enter..." onkeydown="handleSkillKeyDown(event)" class="w-full p-2 bg-slate-900 border border-slate-700 rounded text-sm text-slate-100 focus:outline-none focus:border-sky-500">
+          <div id="skills-tags" class="flex flex-wrap gap-2"></div>
+        </div>
+      </div>
+
+      <!-- Languages -->
+      <div class="border border-slate-700 rounded bg-slate-800">
+        <button onclick="toggleAccordion('acc-languages')" class="w-full text-left px-4 py-3 font-semibold text-slate-200 flex justify-between items-center">
+          <span>Languages</span>
+          <span id="icon-acc-languages">+</span>
+        </button>
+        <div id="acc-languages" class="hidden p-4 border-t border-slate-700 space-y-4">
+          <div id="languages-list" class="space-y-3"></div>
+          <button onclick="addLanguage()" class="w-full py-1.5 text-xs bg-slate-700 hover:bg-slate-600 text-sky-300 rounded border border-dashed border-sky-600">
+            + Add Language
+          </button>
+        </div>
+      </div>
+
+      <!-- Projects -->
+      <div class="border border-slate-700 rounded bg-slate-800">
+        <button onclick="toggleAccordion('acc-projects')" class="w-full text-left px-4 py-3 font-semibold text-slate-200 flex justify-between items-center">
+          <span>Projects & Certifications</span>
+          <span id="icon-acc-projects">+</span>
+        </button>
+        <div id="acc-projects" class="hidden p-4 border-t border-slate-700 space-y-4">
+          <div id="projects-list" class="space-y-3"></div>
+          <button onclick="addProject()" class="w-full py-1.5 text-xs bg-slate-700 hover:bg-slate-600 text-sky-300 rounded border border-dashed border-sky-600">
+            + Add Project / Certificate
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Live Preview Canvas (Right Side) -->
+    <section class="w-full md:w-1/2 lg:w-7/12 bg-slate-950 flex justify-center items-start p-2 overflow-y-auto max-h-[85vh]">
+      <div class="print-area bg-white text-slate-900 w-full max-w-[800px] min-h-[1050px] p-8 shadow-2xl rounded border border-slate-200 flex flex-col justify-between" dir="ltr">
+        
+        <div>
+          <!-- CV Header -->
+          <header class="border-b-2 border-slate-800 pb-4 mb-6">
+            <h1 id="preview-fullName" class="text-3xl font-extrabold tracking-tight text-slate-900">Your Full Name</h1>
+            <p id="preview-title" class="text-lg font-medium text-sky-700 mt-1">Professional Title</p>
+            <div id="preview-contacts" class="flex flex-wrap gap-4 text-xs text-slate-600 mt-3"></div>
+          </header>
+
+          <!-- Summary Section -->
+          <section id="sec-summary" class="mb-6 hidden">
+            <h2 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 border-b border-slate-200 pb-1">Professional Summary</h2>
+            <p id="preview-summary" class="text-sm text-slate-700 leading-relaxed"></p>
+          </section>
+
+          <!-- Experience Section -->
+          <section id="sec-experience" class="mb-6 hidden">
+            <h2 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3 border-b border-slate-200 pb-1">Work Experience</h2>
+            <div id="preview-experience" class="space-y-4"></div>
+          </section>
+
+          <!-- Education Section -->
+          <section id="sec-education" class="mb-6 hidden">
+            <h2 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3 border-b border-slate-200 pb-1">Education</h2>
+            <div id="preview-education" class="space-y-3"></div>
+          </section>
+
+          <!-- Skills Section -->
+          <section id="sec-skills" class="mb-6 hidden">
+            <h2 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 border-b border-slate-200 pb-1">Skills</h2>
+            <div id="preview-skills" class="flex flex-wrap gap-1.5"></div>
+          </section>
+
+          <!-- Languages Section -->
+          <section id="sec-languages" class="mb-6 hidden">
+            <h2 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 border-b border-slate-200 pb-1">Languages</h2>
+            <div id="preview-languages" class="grid grid-cols-2 gap-2 text-xs"></div>
+          </section>
+
+          <!-- Projects Section -->
+          <section id="sec-projects" class="mb-6 hidden">
+            <h2 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3 border-b border-slate-200 pb-1">Projects & Certifications</h2>
+            <div id="preview-projects" class="space-y-3"></div>
+          </section>
+        </div>
+
+        <!-- Print Watermark & Credits -->
+        <div class="pt-6 border-t border-slate-100 text-xs text-slate-500 flex justify-between items-center">
+          <span>AIESEC in MUST — CV Builder</span>
+          <span class="font-medium text-slate-700 print-credits">Made by Anas Ahmed Ghazi & Mohammed Mohy</span>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="no-print bg-slate-800 border-t border-slate-700 px-6 py-3 text-center text-xs text-slate-400">
+    Made by Anas Ahmed Ghazi & Mohammed Mohy
+  </footer>
+
+  <!-- App Logic -->
+  <script>
+    let skills = [];
+    let experiences = [];
+    let educations = [];
+    let languages = [];
+    let projects = [];
+
+    function toggleAccordion(id) {
+      const el = document.getElementById(id);
+      const icon = document.getElementById('icon-' + id);
+      if (el.classList.contains('hidden')) {
+        el.classList.remove('hidden');
+        icon.textContent = '−';
+      } else {
+        el.classList.add('hidden');
+        icon.textContent = '+';
+      }
+    }
+
+    function updatePreview() {
+      // Personal Info
+      const name = document.getElementById('input-fullName').value;
+      const title = document.getElementById('input-title').value;
+      const email = document.getElementById('input-email').value;
+      const phone = document.getElementById('input-phone').value;
+      const location = document.getElementById('input-location').value;
+      const linkedin = document.getElementById('input-linkedin').value;
+
+      document.getElementById('preview-fullName').textContent = name || 'Your Full Name';
+      document.getElementById('preview-title').textContent = title || 'Professional Title';
+
+      const contactsEl = document.getElementById('preview-contacts');
+      contactsEl.innerHTML = '';
+      if (email) contactsEl.innerHTML += `<span>📧 ${email}</span>`;
+      if (phone) contactsEl.innerHTML += `<span>📞 ${phone}</span>`;
+      if (location) contactsEl.innerHTML += `<span>📍 ${location}</span>`;
+      if (linkedin) contactsEl.innerHTML += `<span>🔗 ${linkedin}</span>`;
+
+      // Summary
+      const summary = document.getElementById('input-summary').value;
+      document.getElementById('char-count').textContent = `${summary.length} / 500`;
+      const secSummary = document.getElementById('sec-summary');
+      if (summary.trim()) {
+        secSummary.classList.remove('hidden');
+        document.getElementById('preview-summary').textContent = summary;
+      } else {
+        secSummary.classList.add('hidden');
+      }
+
+      // Experience
+      const expPreview = document.getElementById('preview-experience');
+      const secExp = document.getElementById('sec-experience');
+      expPreview.innerHTML = '';
+      if (experiences.length > 0) {
+        secExp.classList.remove('hidden');
+        experiences.forEach(exp => {
+          expPreview.innerHTML += `
+            <div>
+              <div class="flex justify-between items-baseline">
+                <h3 class="text-sm font-bold text-slate-800">${exp.title || 'Job Title'}</h3>
+                <span class="text-xs text-slate-500">${exp.dates || ''}</span>
+              </div>
+              <p class="text-xs font-medium text-sky-700">${exp.company || ''}</p>
+              <p class="text-xs text-slate-600 mt-1 whitespace-pre-line">${exp.achievements || ''}</p>
+            </div>
+          `;
+        });
+      } else {
+        secExp.classList.add('hidden');
+      }
+
+      // Education
+      const eduPreview = document.getElementById('preview-education');
+      const secEdu = document.getElementById('sec-education');
+      eduPreview.innerHTML = '';
+      if (educations.length > 0) {
+        secEdu.classList.remove('hidden');
+        educations.forEach(edu => {
+          eduPreview.innerHTML += `
+            <div class="flex justify-between items-baseline">
+              <div>
+                <h3 class="text-sm font-bold text-slate-800">${edu.degree || 'Degree / Major'}</h3>
+                <p class="text-xs text-slate-600">${edu.institution || ''}</p>
+              </div>
+              <span class="text-xs text-slate-500">${edu.year || ''}</span>
+            </div>
+          `;
+        });
+      } else {
+        secEdu.classList.add('hidden');
+      }
+
+      // Skills
+      const skillsPreview = document.getElementById('preview-skills');
+      const secSkills = document.getElementById('sec-skills');
+      skillsPreview.innerHTML = '';
+      if (skills.length > 0) {
+        secSkills.classList.remove('hidden');
+        skills.forEach(skill => {
+          skillsPreview.innerHTML += `
+            <span class="bg-sky-50 text-sky-800 border border-sky-200 text-xs px-2.5 py-0.5 rounded font-medium">${skill}</span>
+          `;
+        });
+      } else {
+        secSkills.classList.add('hidden');
+      }
+
+      // Languages
+      const langPreview = document.getElementById('preview-languages');
+      const secLang = document.getElementById('sec-languages');
+      langPreview.innerHTML = '';
+      if (languages.length > 0) {
+        secLang.classList.remove('hidden');
+        languages.forEach(lang => {
+          langPreview.innerHTML += `
+            <div class="flex justify-between border-b border-slate-100 pb-1">
+              <span class="font-bold text-slate-800">${lang.name || 'Language'}</span>
+              <span class="text-slate-500">${lang.level || ''}</span>
+            </div>
+          `;
+        });
+      } else {
+        secLang.classList.add('hidden');
+      }
+
+      // Projects
+      const projPreview = document.getElementById('preview-projects');
+      const secProj = document.getElementById('sec-projects');
+      projPreview.innerHTML = '';
+      if (projects.length > 0) {
+        secProj.classList.remove('hidden');
+        projects.forEach(proj => {
+          projPreview.innerHTML += `
+            <div>
+              <h3 class="text-sm font-bold text-slate-800">${proj.name || 'Project Name'}</h3>
+              <p class="text-xs text-slate-600 mt-0.5">${proj.description || ''}</p>
+            </div>
+          `;
+        });
+      } else {
+        secProj.classList.add('hidden');
+      }
+    }
+
+    // Dynamic Handlers: Experience
+    function addExperience(data = { title: '', company: '', dates: '', achievements: '' }) {
+      const id = Date.now() + Math.random();
+      experiences.push({ id, ...data });
+      renderExperienceInputs();
+      updatePreview();
+    }
+
+    function removeExperience(id) {
+      experiences = experiences.filter(e => e.id !== id);
+      renderExperienceInputs();
+      updatePreview();
+    }
+
+    function renderExperienceInputs() {
+      const container = document.getElementById('experience-list');
+      container.innerHTML = '';
+      experiences.forEach(exp => {
+        container.innerHTML += `
+          <div class="p-3 bg-slate-900 border border-slate-700 rounded space-y-2 relative">
+            <button onclick="removeExperience(${exp.id})" class="absolute top-2 right-2 text-rose-400 text-xs hover:underline">Remove</button>
+            <input type="text" placeholder="Job Title" value="${exp.title}" oninput="updateExpField(${exp.id}, 'title', this.value)" class="w-full p-1.5 bg-slate-800 border border-slate-700 rounded text-sm text-slate-100">
+            <div class="grid grid-cols-2 gap-2">
+              <input type="text" placeholder="Company Name" value="${exp.company}" oninput="updateExpField(${exp.id}, 'company', this.value)" class="p-1.5 bg-slate-800 border border-slate-700 rounded text-sm text-slate-100">
+              <input type="text" placeholder="Dates (e.g. 2022 - 2024)" value="${exp.dates}" oninput="updateExpField(${exp.id}, 'dates', this.value)" class="p-1.5 bg-slate-800 border border-slate-700 rounded text-sm text-slate-100">
+            </div>
+            <textarea rows="2" placeholder="Key responsibilities & achievements..." oninput="updateExpField(${exp.id}, 'achievements', this.value)" class="w-full p-1.5 bg-slate-800 border border-slate-700 rounded text-sm text-slate-100 resize-none">${exp.achievements}</textarea>
+          </div>
+        `;
+      });
+    }
+
+    function updateExpField(id, field, val) {
+      const item = experiences.find(e => e.id === id);
+      if (item) item[field] = val;
+      updatePreview();
+    }
+
+    // Dynamic Handlers: Education
+    function addEducation(data = { degree: '', institution: '', year: '' }) {
+      const id = Date.now() + Math.random();
+      educations.push({ id, ...data });
+      renderEducationInputs();
+      updatePreview();
+    }
+
+    function removeEducation(id) {
+      educations = educations.filter(e => e.id !== id);
+      renderEducationInputs();
+      updatePreview();
+    }
+
+    function renderEducationInputs() {
+      const container = document.getElementById('education-list');
+      container.innerHTML = '';
+      educations.forEach(edu => {
+        container.innerHTML += `
+          <div class="p-3 bg-slate-900 border border-slate-700 rounded space-y-2 relative">
+            <button onclick="removeEducation(${edu.id})" class="absolute top-2 right-2 text-rose-400 text-xs hover:underline">Remove</button>
+            <input type="text" placeholder="Degree / Field of Study" value="${edu.degree}" oninput="updateEduField(${edu.id}, 'degree', this.value)" class="w-full p-1.5 bg-slate-800 border border-slate-700 rounded text-sm text-slate-100">
+            <div class="grid grid-cols-2 gap-2">
+              <input type="text" placeholder="Institution / University" value="${edu.institution}" oninput="updateEduField(${edu.id}, 'institution', this.value)" class="p-1.5 bg-slate-800 border border-slate-700 rounded text-sm text-slate-100">
+              <input type="text" placeholder="Graduation Year" value="${edu.year}" oninput="updateEduField(${edu.id}, 'year', this.value)" class="p-1.5 bg-slate-800 border border-slate-700 rounded text-sm text-slate-100">
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function updateEduField(id, field, val) {
+      const item = educations.find(e => e.id === id);
+      if (item) item[field] = val;
+      updatePreview();
+    }
+
+    // Dynamic Handlers: Languages
+    function addLanguage(data = { name: '', level: '' }) {
+      const id = Date.now() + Math.random();
+      languages.push({ id, ...data });
+      renderLanguageInputs();
+      updatePreview();
+    }
+
+    function removeLanguage(id) {
+      languages = languages.filter(l => l.id !== id);
+      renderLanguageInputs();
+      updatePreview();
+    }
+
+    function renderLanguageInputs() {
+      const container = document.getElementById('languages-list');
+      container.innerHTML = '';
+      languages.forEach(lang => {
+        container.innerHTML += `
+          <div class="p-3 bg-slate-900 border border-slate-700 rounded space-y-2 relative">
+            <button onclick="removeLanguage(${lang.id})" class="absolute top-2 right-2 text-rose-400 text-xs hover:underline">Remove</button>
+            <div class="grid grid-cols-2 gap-2">
+              <input type="text" placeholder="Language (e.g. English)" value="${lang.name}" oninput="updateLangField(${lang.id}, 'name', this.value)" class="p-1.5 bg-slate-800 border border-slate-700 rounded text-sm text-slate-100">
+              <input type="text" placeholder="Proficiency (e.g. Native)" value="${lang.level}" oninput="updateLangField(${lang.id}, 'level', this.value)" class="p-1.5 bg-slate-800 border border-slate-700 rounded text-sm text-slate-100">
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function updateLangField(id, field, val) {
+      const item = languages.find(l => l.id === id);
+      if (item) item[field] = val;
+      updatePreview();
+    }
+
+    // Dynamic Handlers: Projects
+    function addProject(data = { name: '', description: '' }) {
+      const id = Date.now() + Math.random();
+      projects.push({ id, ...data });
+      renderProjectInputs();
+      updatePreview();
+    }
+
+    function removeProject(id) {
+      projects = projects.filter(p => p.id !== id);
+      renderProjectInputs();
+      updatePreview();
+    }
+
+    function renderProjectInputs() {
+      const container = document.getElementById('projects-list');
+      container.innerHTML = '';
+      projects.forEach(proj => {
+        container.innerHTML += `
+          <div class="p-3 bg-slate-900 border border-slate-700 rounded space-y-2 relative">
+            <button onclick="removeProject(${proj.id})" class="absolute top-2 right-2 text-rose-400 text-xs hover:underline">Remove</button>
+            <input type="text" placeholder="Project / Certificate Name" value="${proj.name}" oninput="updateProjField(${proj.id}, 'name', this.value)" class="w-full p-1.5 bg-slate-800 border border-slate-700 rounded text-sm text-slate-100">
+            <textarea rows="2" placeholder="Brief description or credentials..." oninput="updateProjField(${proj.id}, 'description', this.value)" class="w-full p-1.5 bg-slate-800 border border-slate-700 rounded text-sm text-slate-100 resize-none">${proj.description}</textarea>
+          </div>
+        `;
+      });
+    }
+
+    function updateProjField(id, field, val) {
+      const item = projects.find(p => p.id === id);
+      if (item) item[field] = val;
+      updatePreview();
+    }
+
+    // Skills Tag Manager
+    function handleSkillKeyDown(e) {
+      if (e.key === 'Enter' && e.target.value.trim()) {
+        e.preventDefault();
+        const val = e.target.value.trim();
+        if (!skills.includes(val)) {
+          skills.push(val);
+          renderSkillsTags();
+          updatePreview();
+        }
+        e.target.value = '';
+      }
+    }
+
+    function removeSkill(val) {
+      skills = skills.filter(s => s !== val);
+      renderSkillsTags();
+      updatePreview();
+    }
+
+    function renderSkillsTags() {
+      const container = document.getElementById('skills-tags');
+      container.innerHTML = '';
+      skills.forEach(skill => {
+        container.innerHTML += `
+          <span class="bg-sky-950 text-sky-300 border border-sky-700 text-xs px-2.5 py-1 rounded-full flex items-center gap-1.5">
+            ${skill}
+            <button onclick="removeSkill('${skill}')" class="hover:text-rose-400 font-bold">×</button>
+          </span>
+        `;
+      });
+    }
+
+    // Clear Form
+    function clearForm() {
+      document.getElementById('input-fullName').value = '';
+      document.getElementById('input-title').value = '';
+      document.getElementById('input-email').value = '';
+      document.getElementById('input-phone').value = '';
+      document.getElementById('input-location').value = '';
+      document.getElementById('input-linkedin').value = '';
+      document.getElementById('input-summary').value = '';
+
+      skills = [];
+      experiences = [];
+      educations = [];
+      languages = [];
+      projects = [];
+
+      renderSkillsTags();
+      renderExperienceInputs();
+      renderEducationInputs();
+      renderLanguageInputs();
+      renderProjectInputs();
+
+      updatePreview();
+    }
+  </script>
+</body>
+</html>
